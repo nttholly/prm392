@@ -40,78 +40,70 @@ public class ProductsCardActivity extends AppCompatActivity {
         db = new ShoppingDatabase(this);
 
         Intent intent = getIntent();
-        String name;
-        switch (MainActivity.name_data){
-            case "Fashion":
-                name = intent.getStringExtra(MainActivity.FASHION_KEY);
-                tv_product_name.setText(name);
-                table_name = ShoppingDatabase.TB_FASHION;
-                break;
-            case "Books":
-                name = intent.getStringExtra(MainActivity.BOOK_KEY);
-                tv_product_name.setText(name);
-                table_name = ShoppingDatabase.TB_BOOK;
-                break;
-            case "Beauty Tools":
-                name = intent.getStringExtra(MainActivity.BEAUTY_KEY);
-                tv_product_name.setText(name);
-                table_name = ShoppingDatabase.TB_BEAUTY;
-                break;
-            case "Electronics":
-                name = intent.getStringExtra(MainActivity.ELECTRICS_KEY);
-                tv_product_name.setText(name);
-                table_name = ShoppingDatabase.TB_ELECTRICS;
-                break;
-            case "Video Game":
-                name = intent.getStringExtra(MainActivity.GAME_KEY);
-                tv_product_name.setText(name);
-                table_name = ShoppingDatabase.TB_GAME;
-                break;
-            case "Home and Cooker":
-                name = intent.getStringExtra(MainActivity.HOME_KEY);
-                tv_product_name.setText(name);
-                table_name = ShoppingDatabase.TB_HOME_COOKER;
-                break;
-            case "Laptop":
-                name = intent.getStringExtra(MainActivity.LAPTOP_KEY);
-                tv_product_name.setText(name);
-                table_name = ShoppingDatabase.TB_LAPTOP;
-                break;
-            case "Mobile":
-                name = intent.getStringExtra(MainActivity.MOBILE_KEY);
-                tv_product_name.setText(name);
-                table_name = ShoppingDatabase.TB_MOBILE;
-                break;
-            case "Sports":
-                name = intent.getStringExtra(MainActivity.SPORTS_KEY);
-                tv_product_name.setText(name);
-                table_name = ShoppingDatabase.TB_SPORTS;
-                break;
-            case "Car Tools":
-                name = intent.getStringExtra(MainActivity.CAR_KEY);
-                tv_product_name.setText(name);
-                table_name = ShoppingDatabase.TB_CAR_TOOL;
-                break;
+        String groupName = "";
+
+        if (MainActivity.name_data != null && MainActivity.name_data.equals("Fashion")) {
+            groupName = intent.getStringExtra(MainActivity.FASHION_KEY);
+            tv_product_name.setText(groupName);
+
+            switch (groupName) {
+                case "Áo sơ mi, áo thun, áo polo":
+                    table_name = ShoppingDatabase.TB_SHIRT;
+                    break;
+                case "Quần dài, quần kaki, quần tây":
+                    table_name = ShoppingDatabase.TB_PANTS;
+                    break;
+                case "Quần short nam/nữ, thể thao":
+                    table_name = ShoppingDatabase.TB_SHORTS;
+                    break;
+                case "Áo khoác, áo gió, áo len, hoodie":
+                    table_name = ShoppingDatabase.TB_JACKET;
+                    break;
+                case "Giày sneaker, giày da, boots, thể thao":
+                    table_name = ShoppingDatabase.TB_SHOES;
+                    break;
+                case "Thắt lưng, dây nịt":
+                    table_name = ShoppingDatabase.TB_BELT;
+                    break;
+                case "Túi xách, balo, túi da":
+                    table_name = ShoppingDatabase.TB_BAG;
+                    break;
+                case "Mũ lưỡi trai, mũ bucket, nón rộng vành":
+                    table_name = ShoppingDatabase.TB_HAT;
+                    break;
+                case "Váy, đầm nữ":
+                    table_name = ShoppingDatabase.TB_DRESS;
+                    break;
+                case "Kính, đồng hồ, khăn, trang sức":
+                    table_name = ShoppingDatabase.TB_ACCESSORY;
+                    break;
+                default:
+                    table_name = ShoppingDatabase.TB_SHIRT;
+                    Toast.makeText(this, "Không tìm thấy tên bảng tương ứng với: " + groupName, Toast.LENGTH_LONG).show();
+                    break;
+            }
+        } else {
+            table_name = ShoppingDatabase.TB_SHIRT;
         }
+
         MainActivity.name_data = "";
 
         ArrayList<Products> products = new ArrayList<>();
-        products = db.getAllProducts(table_name);
-        adapter = new ProductAdapter(products, new OnRecyclerViewClickListener() {
-            @Override
-            public void OnItemClick(int productId) {
-                Intent i = new Intent(getBaseContext(),DisplayProductsActivity.class);
-                i.putExtra(PRODUCT_ID_KEY,productId);
-                i.putExtra(TABLE_NAME_KEY,table_name);
-                HomeActivity.flag = false;
-                startActivity(i);
-            }
+        if (table_name != null) products = db.getAllProducts(table_name);
+        else Toast.makeText(this, "Lỗi: Tên bảng không hợp lệ.", Toast.LENGTH_SHORT).show();
+
+        adapter = new ProductAdapter(products, productId -> {
+            Intent i = new Intent(getBaseContext(),DisplayProductsActivity.class);
+            i.putExtra(PRODUCT_ID_KEY,productId);
+            i.putExtra(TABLE_NAME_KEY,table_name);
+            HomeActivity.flag = false;
+            startActivity(i);
         });
+
         RecyclerView.LayoutManager lm = new GridLayoutManager(this,2);
         rv.setLayoutManager(lm);
         rv.setHasFixedSize(true);
         rv.setAdapter(adapter);
-
     }
 
     @SuppressLint("ResourceAsColor")
@@ -122,30 +114,31 @@ public class ProductsCardActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                ArrayList<Products> product = db.getProductForSearch(query,table_name);
-                adapter.setProducts(product);
-                adapter.notifyDataSetChanged();
+                if (table_name != null) {
+                    ArrayList<Products> product = db.getProductForSearch(query,table_name);
+                    adapter.setProducts(product);
+                    adapter.notifyDataSetChanged();
+                }
                 return false;
             }
-
             @Override
             public boolean onQueryTextChange(String newText) {
-                ArrayList<Products> product = db.getProductForSearch(newText,table_name);
-                adapter.setProducts(product);
-                adapter.notifyDataSetChanged();
+                if (table_name != null) {
+                    ArrayList<Products> product = db.getProductForSearch(newText,table_name);
+                    adapter.setProducts(product);
+                    adapter.notifyDataSetChanged();
+                }
                 return false;
             }
         });
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
+        searchView.setOnCloseListener(() -> {
+            if (table_name != null) {
                 ArrayList<Products> product = db.getAllProducts(table_name);
                 adapter.setProducts(product);
                 adapter.notifyDataSetChanged();
-                return false;
             }
+            return false;
         });
         return true;
     }
-
 }

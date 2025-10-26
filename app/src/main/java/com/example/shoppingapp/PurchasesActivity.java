@@ -20,17 +20,13 @@ public class PurchasesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_purchases);
 
         lv = findViewById(R.id.lv_purchases);
-
         db = new ShoppingDatabase(this);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("purchases");
+        actionBar.setTitle("Purchases");
 
-        ArrayList<Products> p = new ArrayList<>();
-        p = db.getAllProductsInPurchases();
+        ArrayList<Products> p = db.getAllProductsInPurchases();
         pa = new PurchasesAdapter(p,this);
-        pa.notifyDataSetChanged();
         lv.setAdapter(pa);
-
     }
 }

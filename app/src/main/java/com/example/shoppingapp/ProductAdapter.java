@@ -2,18 +2,14 @@ package com.example.shoppingapp;
 
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.ArrayList;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
@@ -26,55 +22,62 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         this.listener = listener;
     }
 
-    public ArrayList<Products> getProducts() {
-        return products;
-    }
-
-    public void setProducts(ArrayList<Products> products) {
-        this.products = products;
-    }
-
     @NonNull
     @Override
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.custome_card_products,null,false);
-        ProductViewHolder pvh = new ProductViewHolder(v);
-        return pvh;
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.custome_card_products, parent, false);
+        return new ProductViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         Products p = products.get(position);
-        if(p.getImage() != 0){
-            holder.img.setImageResource(p.getImage());
-        }else{
+
+        // image is String -> resolve to drawable id
+        if (p.getImage() != null && !p.getImage().isEmpty()) {
+            int imageResId = holder.itemView.getContext().getResources()
+                    .getIdentifier(p.getImage().trim().toLowerCase(), "drawable",
+                            holder.itemView.getContext().getPackageName());
+            if (imageResId != 0) {
+                holder.img.setImageResource(imageResId);
+            } else {
+                holder.img.setImageResource(R.drawable.products);
+            }
+        } else {
             holder.img.setImageResource(R.drawable.products);
         }
+
         holder.name.setText(p.getName());
-        holder.price.setText(p.getPrice()+"$");
-        holder.brand.setText("Brand: "+p.getBrand());
-        holder.number_pieces.setText(p.getPieces()+"");
-        if(p.getDiscount()>0){
-            holder.priceAfter.setText(p.getPrice()-(p.getPrice()*(p.getDiscount()/100))+"$");
-            holder.price.setPaintFlags(holder.price.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);//وضع خط علي السعر القديم
+        holder.price.setText(p.getPrice() + "$");
+        holder.brand.setText("Brand: " + p.getBrand());
+        holder.number_pieces.setText(String.valueOf(p.getPieces()));
+
+        if (p.getDiscount() > 0) {
+            double priceAfter = p.getPrice() - (p.getPrice() * (p.getDiscount() / 100.0));
+            holder.priceAfter.setText(priceAfter + "$");
+            holder.price.setPaintFlags(holder.price.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             holder.price.setTextColor(Color.parseColor("#BFBFBF"));
-        }else{
+        } else {
             holder.priceAfter.setText("");
             holder.price.setTextColor(Color.parseColor("#000000"));
         }
 
-        holder.name.setTag(position+1); //اوبجكت مخفي لكي اخزن product_id
+        holder.itemView.setTag(p.getId());
     }
 
     @Override
     public int getItemCount() {
-        return products.size();
+        return products == null ? 0 : products.size();
     }
 
-    class ProductViewHolder extends RecyclerView.ViewHolder{
+    // allow updating list
+    public void setProducts(ArrayList<Products> newProducts) {
+        this.products = newProducts;
+    }
 
+    class ProductViewHolder extends RecyclerView.ViewHolder {
         ImageView img;
-        TextView name,price,brand,number_pieces,priceAfter;
+        TextView name, price, brand, number_pieces, priceAfter;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -85,15 +88,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             number_pieces = itemView.findViewById(R.id.tv_mun_pieces_card_products);
             priceAfter = itemView.findViewById(R.id.tv_priceafter_card_products);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int id = (int)name.getTag();
-                    listener.OnItemClick(id);
+            itemView.setOnClickListener(v -> {
+                Object tag = itemView.getTag();
+                if (tag instanceof Integer) {
+                    listener.OnItemClick((int) tag);
                 }
             });
-
         }
     }
-
 }

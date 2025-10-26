@@ -68,25 +68,23 @@
                         android:orientation="vertical"
                         android:padding="5dp">
 
-                        <com.airbnb.lottie.LottieAnimationView
-                            android:id="@+id/animationView_fashion"
+                        <ImageView
+                            android:id="@+id/iv_fashion"
                             android:layout_width="135dp"
                             android:layout_height="125dp"
                             android:scaleType="centerCrop"
                             android:layout_gravity="center"
-                            app:lottie_autoPlay="true"
-                            app:lottie_loop="true"
-                            app:lottie_rawRes="@raw/fashion" />
+                            android:src="@drawable/tshirt" />
                         <TextView
                             android:id="@+id/tv_fashion_card"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Fashion"
-                            android:textSize="20dp"
-                            android:textStyle="bold"
+                            android:layout_gravity="center"
                             android:layout_marginTop="5dp"
+                            android:text="Shirt"
                             android:textColor="@color/text_cards_color"
-                            android:layout_gravity="center"/>
+                            android:textSize="20dp"
+                            android:textStyle="bold" />
 
                     </LinearLayout>
 
@@ -115,13 +113,13 @@
                         <ImageView
                             android:layout_width="100dp"
                             android:layout_height="100dp"
-                            android:src="@drawable/electronics"
+                            android:src="@drawable/pantico"
                             android:layout_gravity="center"/>
                         <TextView
                             android:id="@+id/tv_electronics_card"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Electronics"
+                            android:text="Pants"
                             android:textSize="20dp"
                             android:layout_marginTop="5dp"
                             android:textColor="@color/text_cards_color"
@@ -155,13 +153,13 @@
                         <ImageView
                             android:layout_width="100dp"
                             android:layout_height="100dp"
-                            android:src="@drawable/phone"
+                            android:src="@drawable/shorts"
                             android:layout_gravity="center"/>
                         <TextView
                             android:id="@+id/tv_mobile_card"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Mobile"
+                            android:text="Shorts"
                             android:textSize="20dp"
                             android:layout_marginTop="5dp"
                             android:textStyle="bold"
@@ -195,13 +193,13 @@
                         <ImageView
                             android:layout_width="100dp"
                             android:layout_height="100dp"
-                            android:src="@drawable/laptop2"
+                            android:src="@drawable/jacket"
                             android:layout_gravity="center"/>
                         <TextView
                             android:id="@+id/tv_laptop_card"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Laptop"
+                            android:text="Jacket"
                             android:textSize="20dp"
                             android:layout_marginTop="5dp"
                             android:textColor="@color/text_cards_color"
@@ -235,13 +233,13 @@
                         <ImageView
                             android:layout_width="100dp"
                             android:layout_height="100dp"
-                            android:src="@drawable/game"
+                            android:src="@drawable/sneakers"
                             android:layout_gravity="center"/>
                         <TextView
                             android:id="@+id/tv_game_card"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Video Game"
+                            android:text="Shoes"
                             android:textSize="20dp"
                             android:layout_marginTop="5dp"
                             android:textStyle="bold"
@@ -275,13 +273,13 @@
                         <ImageView
                             android:layout_width="100dp"
                             android:layout_height="100dp"
-                            android:src="@drawable/sports"
+                            android:src="@drawable/belt"
                             android:layout_gravity="center"/>
                         <TextView
                             android:id="@+id/tv_sports_card"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Sports"
+                            android:text="Belt"
                             android:textSize="20dp"
                             android:layout_marginTop="5dp"
                             android:textColor="@color/text_cards_color"
@@ -312,25 +310,23 @@
                         android:orientation="vertical"
                         android:padding="5dp">
 
-                        <com.airbnb.lottie.LottieAnimationView
+                        <ImageView
                             android:id="@+id/animationView"
                             android:layout_width="135dp"
                             android:layout_height="125dp"
                             android:scaleType="centerCrop"
                             android:layout_gravity="center"
-                            app:lottie_autoPlay="true"
-                            app:lottie_loop="true"
-                            app:lottie_rawRes="@raw/book2" />
+                            android:src="@drawable/handbag_10802004" />
                         <TextView
                             android:id="@+id/tv_books_card"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Books"
-                            android:textSize="20dp"
+                            android:layout_gravity="center"
                             android:layout_marginTop="15dp"
-                            android:textStyle="bold"
+                            android:text="Bag"
                             android:textColor="@color/text_cards_color"
-                            android:layout_gravity="center"/>
+                            android:textSize="20dp"
+                            android:textStyle="bold" />
 
                     </LinearLayout>
 
@@ -359,13 +355,13 @@
                         <ImageView
                             android:layout_width="100dp"
                             android:layout_height="100dp"
-                            android:src="@drawable/homecooker"
+                            android:src="@drawable/hat"
                             android:layout_gravity="center"/>
                         <TextView
                             android:id="@+id/tv_home_card"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:text="Home and Cooker"
+                            android:text="Hat"
                             android:textSize="20dp"
                             android:layout_marginTop="5dp"
                             android:textColor="@color/text_cards_color"
@@ -400,13 +396,13 @@
                         <ImageView
                             android:layout_width="100dp"
                             android:layout_height="100dp"
-                            android:src="@drawable/cosmetics"
+                            android:src="@drawable/dress"
                             android:layout_gravity="center"/>
                         <TextView
                             android:id="@+id/tv_beauty_card"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Beauty Tools"
+                            android:text="Dress"
                             android:textSize="20dp"
                             android:layout_marginTop="5dp"
                             android:textStyle="bold"
@@ -441,13 +437,13 @@
                         <ImageView
                             android:layout_width="100dp"
                             android:layout_height="100dp"
-                            android:src="@drawable/cartools"
+                            android:src="@drawable/accessories"
                             android:layout_gravity="center"/>
                         <TextView
                             android:id="@+id/tv_car_card"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Car Tools"
+                            android:text="Accessory"
                             android:textSize="20dp"
                             android:layout_marginTop="5dp"
                             android:textColor="@color/text_cards_color"
