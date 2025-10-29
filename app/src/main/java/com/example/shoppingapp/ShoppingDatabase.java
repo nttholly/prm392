@@ -14,7 +14,7 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
     public static final String DB_NAME = "shopping_db";
     public static final int DB_VERSION = 18; // Giữ nguyên version của bạn
 
-    // tables
+    // (Giữ nguyên toàn bộ khai báo Tên bảng, Tên cột...)
     public static final String TB_SHIRT = "shirt";
     public static final String TB_PANTS = "pants";
     public static final String TB_SHORTS = "shorts";
@@ -25,12 +25,9 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
     public static final String TB_HAT = "hat";
     public static final String TB_DRESS = "dress";
     public static final String TB_ACCESSORY = "accessory";
-
     public static final String TB_USERS = "users";
     public static final String TB_PURCHASES = "purchases";
     public static final String TB_PRODUCT_DISCOUNT = "product_discount";
-
-    // columns
     public static final String TB_CLM_ID = "id";
     public static final String TB_CLM_IMAGE = "image";
     public static final String TB_CLM_NAME = "name";
@@ -41,8 +38,6 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
     public static final String TB_CLM_DISCOUNT = "discount";
     public static final String TB_CLM_RATING = "rating";
     public static final String TB_CLM_QUANTITY = "quantity";
-
-    // user columns
     public static final String TB_CLM_USER_ID = "user_id";
     public static final String TB_CLM_USER_NAME = "user_name";
     public static final String TB_CLM_USER_FULL_NAME = "full_name";
@@ -58,6 +53,7 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         this.mContext = context.getApplicationContext();
     }
 
+    // (Giữ nguyên các hàm onCreate, onUpgrade, createTables, insertProduct, insertProductDiscount...)
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(createTables(TB_SHIRT));
@@ -70,9 +66,7 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         db.execSQL(createTables(TB_HAT));
         db.execSQL(createTables(TB_DRESS));
         db.execSQL(createTables(TB_ACCESSORY));
-
         db.execSQL(createTables(TB_PRODUCT_DISCOUNT));
-
         db.execSQL("CREATE TABLE " + TB_USERS + " (" +
                 TB_CLM_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 TB_CLM_USER_NAME + " TEXT UNIQUE, " +
@@ -81,7 +75,6 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
                 TB_CLM_USER_EMAIL + " TEXT UNIQUE, " +
                 TB_CLM_USER_PHONE + " TEXT, " +
                 TB_CLM_USER_IMAGE + " TEXT);");
-
         db.execSQL("CREATE TABLE " + TB_PURCHASES + " (" +
                 TB_CLM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 TB_CLM_IMAGE + " TEXT, " +
@@ -90,10 +83,8 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
                 TB_CLM_BRAND + " TEXT, " +
                 TB_CLM_RATING + " REAL, " +
                 TB_CLM_QUANTITY + " INTEGER);");
-
         insertInitialData(db);
     }
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldV, int newV) {
         String[] tables = {
@@ -103,7 +94,6 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         for (String t : tables) db.execSQL("DROP TABLE IF EXISTS " + t);
         onCreate(db);
     }
-
     private String createTables(String tableName) {
         return "CREATE TABLE " + tableName + " (" +
                 TB_CLM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -115,8 +105,6 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
                 TB_CLM_DESCRIPTION + " TEXT, " +
                 TB_CLM_DISCOUNT + " REAL);";
     }
-
-    // --------- Products ---------
     public boolean insertProduct(Products p, String tableName, SQLiteDatabase db) {
         ContentValues v = new ContentValues();
         v.put(TB_CLM_IMAGE, p.getImage());
@@ -130,7 +118,6 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         if (p.getDiscount() > 0) insertProductDiscount(p, db);
         return res != -1;
     }
-
     public boolean insertProductDiscount(Products p, SQLiteDatabase db) {
         ContentValues v = new ContentValues();
         v.put(TB_CLM_IMAGE, p.getImage());
@@ -145,17 +132,26 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
     }
 
 
-    /**
-     * SỬA LỖI: Lấy danh sách sản phẩm
-     * Cần lấy ID để Adapter có thể gửi ID đúng
-     */
+    // === NÂNG CẤP 1: Thêm sortOrder ===
+    // Hàm này dùng để tương thích với code cũ (ví dụ: HomeActivity)
     public ArrayList<Products> getAllProducts(String tableName) {
+        return getAllProducts(tableName, null);
+    }
+
+    // Hàm chính đã nâng cấp (đã sửa lỗi ID và thêm sortOrder)
+    public ArrayList<Products> getAllProducts(String tableName, String sortOrder) {
         ArrayList<Products> list = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM " + tableName, null);
+
+        String sql = "SELECT * FROM " + tableName;
+        if (sortOrder != null && !sortOrder.isEmpty()) {
+            sql += " ORDER BY " + TB_CLM_PRICE + " " + sortOrder; // Sắp xếp theo GIÁ
+        }
+
+        Cursor c = db.rawQuery(sql, null);
         if (c.moveToFirst()) {
             do {
-                @SuppressLint("Range") int id = c.getInt(c.getColumnIndex(TB_CLM_ID)); // <-- LẤY ID
+                @SuppressLint("Range") int id = c.getInt(c.getColumnIndex(TB_CLM_ID)); // LẤY ID
                 @SuppressLint("Range") String image = c.getString(c.getColumnIndex(TB_CLM_IMAGE));
                 @SuppressLint("Range") String name = c.getString(c.getColumnIndex(TB_CLM_NAME));
                 @SuppressLint("Range") double price = c.getDouble(c.getColumnIndex(TB_CLM_PRICE));
@@ -164,7 +160,6 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
                 @SuppressLint("Range") String desc = c.getString(c.getColumnIndex(TB_CLM_DESCRIPTION));
                 @SuppressLint("Range") double disc = c.getDouble(c.getColumnIndex(TB_CLM_DISCOUNT));
 
-                // Dùng constructor CÓ ID
                 Products p = new Products(id, image, name, price, brand, pieces, desc, disc);
                 list.add(p);
             } while (c.moveToNext());
@@ -175,6 +170,7 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
     }
 
     public Products getProduct(int id, String tableName) {
+        // (Giữ nguyên hàm getProduct)
         SQLiteDatabase db = getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM " + tableName + " WHERE " + TB_CLM_ID + "=?", new String[]{String.valueOf(id)});
         if (c.moveToFirst()) {
@@ -195,17 +191,26 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         return null;
     }
 
-    /**
-     * SỬA LỖI: Lấy danh sách sản phẩm khi tìm kiếm
-     * Cũng cần lấy ID giống như hàm getAllProducts
-     */
+    // === NÂNG CẤP 2: Thêm sortOrder ===
+    // Hàm này dùng để tương thích với code cũ
     public ArrayList<Products> getProductForSearch(String nameProduct, String tableName) {
+        return getProductForSearch(nameProduct, tableName, null);
+    }
+
+    // Hàm chính đã nâng cấp (đã sửa lỗi ID và thêm sortOrder)
+    public ArrayList<Products> getProductForSearch(String nameProduct, String tableName, String sortOrder) {
         ArrayList<Products> list = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM " + tableName + " WHERE " + TB_CLM_NAME + " LIKE ?", new String[]{"%" + nameProduct + "%"});
+
+        String sql = "SELECT * FROM " + tableName + " WHERE " + TB_CLM_NAME + " LIKE ?";
+        if (sortOrder != null && !sortOrder.isEmpty()) {
+            sql += " ORDER BY " + TB_CLM_PRICE + " " + sortOrder; // Sắp xếp theo GIÁ
+        }
+
+        Cursor c = db.rawQuery(sql, new String[]{"%" + nameProduct + "%"});
         if (c.moveToFirst()) {
             do {
-                @SuppressLint("Range") int id = c.getInt(c.getColumnIndex(TB_CLM_ID)); // <-- LẤY ID
+                @SuppressLint("Range") int id = c.getInt(c.getColumnIndex(TB_CLM_ID)); // LẤY ID
                 @SuppressLint("Range") String image = c.getString(c.getColumnIndex(TB_CLM_IMAGE));
                 @SuppressLint("Range") String name = c.getString(c.getColumnIndex(TB_CLM_NAME));
                 @SuppressLint("Range") double price = c.getDouble(c.getColumnIndex(TB_CLM_PRICE));
@@ -214,7 +219,6 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
                 @SuppressLint("Range") String desc = c.getString(c.getColumnIndex(TB_CLM_DESCRIPTION));
                 @SuppressLint("Range") double disc = c.getDouble(c.getColumnIndex(TB_CLM_DISCOUNT));
 
-                // Dùng constructor CÓ ID
                 Products p = new Products(id, image, name, price, brand, pieces, desc, disc);
                 list.add(p);
             } while (c.moveToNext());
@@ -224,6 +228,8 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         return list;
     }
 
+    // (Giữ nguyên toàn bộ các hàm Purchases (insert, getAll, delete, update, getTotalPrice) và Users (insert, get, update, checkUser) và insertInitialData...)
+    // ...
     // --------- Purchases ---------
     public boolean insertProductInPurchases(Products p) {
         SQLiteDatabase db = getWritableDatabase();
@@ -238,11 +244,6 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         db.close();
         return res != -1;
     }
-
-    /**
-     * SỬA LỖI: Lấy tất cả sản phẩm trong giỏ hàng
-     * Cần lấy cả ID để dùng cho việc Sửa/Xóa
-     */
     public ArrayList<Products> getAllProductsInPurchases() {
         ArrayList<Products> list = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
@@ -256,10 +257,8 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
                 @SuppressLint("Range") String brand = c.getString(c.getColumnIndex(TB_CLM_BRAND));
                 @SuppressLint("Range") float rating = c.getFloat(c.getColumnIndex(TB_CLM_RATING));
                 @SuppressLint("Range") int qty = c.getInt(c.getColumnIndex(TB_CLM_QUANTITY));
-
                 Products p = new Products(image, name, price, brand, rating, qty);
                 p.setId(id); // <-- SET ID CHO SẢN PHẨM
-
                 list.add(p);
             } while (c.moveToNext());
         }
@@ -267,20 +266,12 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         db.close();
         return list;
     }
-
-    /**
-     * HÀM MỚI: Xóa một sản phẩm khỏi giỏ hàng (Delete)
-     */
     public boolean deleteProductFromPurchases(int productId) {
         SQLiteDatabase db = getWritableDatabase();
         int res = db.delete(TB_PURCHASES, TB_CLM_ID + "=?", new String[]{String.valueOf(productId)});
         db.close();
         return res > 0;
     }
-
-    /**
-     * HÀM MỚI: Cập nhật số lượng sản phẩm trong giỏ hàng (Update)
-     */
     public boolean updateProductInPurchases(int productId, int newQuantity) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues v = new ContentValues();
@@ -289,10 +280,6 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         db.close();
         return res > 0;
     }
-
-    /**
-     * HÀM MỚI: Tính tổng tiền của tất cả sản phẩm trong giỏ hàng
-     */
     @SuppressLint("Range")
     public double getCartTotalPrice() {
         SQLiteDatabase db = getReadableDatabase();
@@ -305,8 +292,6 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         db.close();
         return total;
     }
-
-
     // --------- Users ---------
     public boolean insertUser(Users user) {
         SQLiteDatabase db = getWritableDatabase();
@@ -321,7 +306,6 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         db.close();
         return res != -1;
     }
-
     public Users getUser(int user_id) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM " + TB_USERS + " WHERE " + TB_CLM_USER_ID + "=?", new String[]{String.valueOf(user_id)});
@@ -342,7 +326,6 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         db.close();
         return null;
     }
-
     public boolean upDataUser(Users user) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues v = new ContentValues();
@@ -354,7 +337,6 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         db.close();
         return res > 0;
     }
-
     @SuppressLint("Range")
     public int checkUser(String user_name, String password) {
         SQLiteDatabase db = getReadableDatabase();
@@ -369,8 +351,6 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         db.close();
         return id;
     }
-
-    // ---------- initial data ----------
     private void insertInitialData(SQLiteDatabase db) {
         insertProduct(new Products("tshirt_red", "Áo thun đỏ", 28.0, "Coolmate", 20, "Áo thun đỏ basic", 5.0), TB_SHIRT, db);
         insertProduct(new Products("pants1", "Quần kaki nam", 40.0, "Uniqlo", 35, "Quần kaki thoải mái", 0.0), TB_PANTS, db);
