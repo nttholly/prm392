@@ -3,24 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:gravity="center">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="10dp">
 
             <ImageView
                 android:id="@+id/iv_card_products"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
+                android:scaleType="centerCrop"
                 android:src="@drawable/products"/>
 
             <TextView
@@ -30,7 +31,10 @@
                 android:text="Shoes"
                 android:textSize="24dp"
                 android:gravity="center"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingTop="8dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -62,12 +66,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Brand : AD@S"
-                android:textSize="20dp"/>
+                android:textSize="20dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingTop="4dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingTop="4dp">
 
                 <TextView
                     android:id="@+id/tv_pieces_card_products"
