@@ -16,17 +16,9 @@ public class MainActivity extends AppCompatActivity {
 
     CardView fashion_card,book_card,beauty_card,electrics_card,game_card,homeCooker_card,laptop_card,mobile_card,sports_card,carTools_card;
     TextView tv_fashion,tv_book,tv_beauty,tv_electrics,tv_game,tv_home,tv_laptop,tv_mobile,tv_sports,tv_car;
-    public static final String FASHION_KEY = "fashion_key";
-    public static final String BOOK_KEY = "book_key";
-    public static final String BEAUTY_KEY = "beauty_key";
-    public static final String ELECTRICS_KEY = "electrics_key";
-    public static final String GAME_KEY = "game_key";
-    public static final String HOME_KEY = "home_key";
-    public static final String LAPTOP_KEY = "laptop_key";
-    public static final String MOBILE_KEY = "mobile_key";
-    public static final String SPORTS_KEY = "sports_key";
-    public static final String CAR_KEY = "car_key";
-    public static String name_data ="";
+
+    // THÊM KEY CHUNG NÀY
+    public static final String CATEGORY_KEY = "category_key";
 
     ShoppingDatabase db;
 
@@ -68,9 +60,8 @@ public class MainActivity extends AppCompatActivity {
         fashion_card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                name_data = tv_fashion.getText().toString();
                 Intent intent = new Intent(getBaseContext(),ProductsCardActivity.class);
-                intent.putExtra(FASHION_KEY,tv_fashion.getText().toString());
+                intent.putExtra(CATEGORY_KEY,tv_fashion.getText().toString());
                 startActivity(intent);
             }
         });
@@ -78,9 +69,8 @@ public class MainActivity extends AppCompatActivity {
         book_card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                name_data = tv_book.getText().toString();
                 Intent intent = new Intent(getBaseContext(),ProductsCardActivity.class);
-                intent.putExtra(BOOK_KEY,tv_book.getText().toString());
+                intent.putExtra(CATEGORY_KEY,tv_book.getText().toString());
                 startActivity(intent);
             }
         });
@@ -88,9 +78,8 @@ public class MainActivity extends AppCompatActivity {
         beauty_card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                name_data = tv_beauty.getText().toString();
                 Intent intent = new Intent(getBaseContext(),ProductsCardActivity.class);
-                intent.putExtra(BEAUTY_KEY,tv_beauty.getText().toString());
+                intent.putExtra(CATEGORY_KEY,tv_beauty.getText().toString());
                 startActivity(intent);
             }
         });
@@ -98,9 +87,8 @@ public class MainActivity extends AppCompatActivity {
         electrics_card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                name_data = tv_electrics.getText().toString();
                 Intent intent = new Intent(getBaseContext(),ProductsCardActivity.class);
-                intent.putExtra(ELECTRICS_KEY,tv_electrics.getText().toString());
+                intent.putExtra(CATEGORY_KEY,tv_electrics.getText().toString());
                 startActivity(intent);
             }
         });
@@ -108,9 +96,8 @@ public class MainActivity extends AppCompatActivity {
         game_card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                name_data = tv_game.getText().toString();
                 Intent intent = new Intent(getBaseContext(),ProductsCardActivity.class);
-                intent.putExtra(GAME_KEY,tv_game.getText().toString());
+                intent.putExtra(CATEGORY_KEY,tv_game.getText().toString());
                 startActivity(intent);
             }
         });
@@ -118,9 +105,8 @@ public class MainActivity extends AppCompatActivity {
         homeCooker_card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                name_data = tv_home.getText().toString();
                 Intent intent = new Intent(getBaseContext(),ProductsCardActivity.class);
-                intent.putExtra(HOME_KEY,tv_home.getText().toString());
+                intent.putExtra(CATEGORY_KEY,tv_home.getText().toString());
                 startActivity(intent);
             }
         });
@@ -128,9 +114,8 @@ public class MainActivity extends AppCompatActivity {
         laptop_card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                name_data = tv_laptop.getText().toString();
                 Intent intent = new Intent(getBaseContext(),ProductsCardActivity.class);
-                intent.putExtra(LAPTOP_KEY,tv_laptop.getText().toString());
+                intent.putExtra(CATEGORY_KEY,tv_laptop.getText().toString());
                 startActivity(intent);
             }
         });
@@ -138,9 +123,8 @@ public class MainActivity extends AppCompatActivity {
         mobile_card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                name_data = tv_mobile.getText().toString();
                 Intent intent = new Intent(getBaseContext(),ProductsCardActivity.class);
-                intent.putExtra(MOBILE_KEY,tv_mobile.getText().toString());
+                intent.putExtra(CATEGORY_KEY,tv_mobile.getText().toString());
                 startActivity(intent);
             }
         });
@@ -148,9 +132,8 @@ public class MainActivity extends AppCompatActivity {
         sports_card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                name_data = tv_sports.getText().toString();
                 Intent intent = new Intent(getBaseContext(),ProductsCardActivity.class);
-                intent.putExtra(SPORTS_KEY,tv_sports.getText().toString());
+                intent.putExtra(CATEGORY_KEY,tv_sports.getText().toString());
                 startActivity(intent);
             }
         });
@@ -158,9 +141,8 @@ public class MainActivity extends AppCompatActivity {
         carTools_card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                name_data = tv_car.getText().toString();
                 Intent intent = new Intent(getBaseContext(),ProductsCardActivity.class);
-                intent.putExtra(CAR_KEY,tv_car.getText().toString());
+                intent.putExtra(CATEGORY_KEY,tv_car.getText().toString());
                 startActivity(intent);
             }
         });
