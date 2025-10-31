@@ -12,9 +12,10 @@ import java.util.ArrayList;
 public class ShoppingDatabase extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "shopping_db";
-    public static final int DB_VERSION = 18; // Giữ nguyên version của bạn
+    // Tăng version lên 19 để đảm bảo onUpgrade chạy
+    public static final int DB_VERSION = 19;
 
-    // (Giữ nguyên toàn bộ khai báo Tên bảng, Tên cột...)
+    // (Khai báo tên bảng, tên cột không đổi)
     public static final String TB_SHIRT = "shirt";
     public static final String TB_PANTS = "pants";
     public static final String TB_SHORTS = "shorts";
@@ -53,7 +54,6 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         this.mContext = context.getApplicationContext();
     }
 
-    // (Giữ nguyên các hàm onCreate, onUpgrade, createTables, insertProduct, insertProductDiscount...)
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(createTables(TB_SHIRT));
@@ -131,27 +131,21 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         return res != -1;
     }
 
-
-    // === NÂNG CẤP 1: Thêm sortOrder ===
-    // Hàm này dùng để tương thích với code cũ (ví dụ: HomeActivity)
+    // (Các hàm getAllProducts, getProduct, getProductForSearch không đổi)
     public ArrayList<Products> getAllProducts(String tableName) {
         return getAllProducts(tableName, null);
     }
-
-    // Hàm chính đã nâng cấp (đã sửa lỗi ID và thêm sortOrder)
     public ArrayList<Products> getAllProducts(String tableName, String sortOrder) {
         ArrayList<Products> list = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
-
         String sql = "SELECT * FROM " + tableName;
         if (sortOrder != null && !sortOrder.isEmpty()) {
-            sql += " ORDER BY " + TB_CLM_PRICE + " " + sortOrder; // Sắp xếp theo GIÁ
+            sql += " ORDER BY " + TB_CLM_PRICE + " " + sortOrder;
         }
-
         Cursor c = db.rawQuery(sql, null);
         if (c.moveToFirst()) {
             do {
-                @SuppressLint("Range") int id = c.getInt(c.getColumnIndex(TB_CLM_ID)); // LẤY ID
+                @SuppressLint("Range") int id = c.getInt(c.getColumnIndex(TB_CLM_ID));
                 @SuppressLint("Range") String image = c.getString(c.getColumnIndex(TB_CLM_IMAGE));
                 @SuppressLint("Range") String name = c.getString(c.getColumnIndex(TB_CLM_NAME));
                 @SuppressLint("Range") double price = c.getDouble(c.getColumnIndex(TB_CLM_PRICE));
@@ -159,18 +153,14 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
                 @SuppressLint("Range") int pieces = c.getInt(c.getColumnIndex(TB_CLM_PIECES));
                 @SuppressLint("Range") String desc = c.getString(c.getColumnIndex(TB_CLM_DESCRIPTION));
                 @SuppressLint("Range") double disc = c.getDouble(c.getColumnIndex(TB_CLM_DISCOUNT));
-
                 Products p = new Products(id, image, name, price, brand, pieces, desc, disc);
                 list.add(p);
             } while (c.moveToNext());
         }
         c.close();
-        db.close();
         return list;
     }
-
     public Products getProduct(int id, String tableName) {
-        // (Giữ nguyên hàm getProduct)
         SQLiteDatabase db = getReadableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM " + tableName + " WHERE " + TB_CLM_ID + "=?", new String[]{String.valueOf(id)});
         if (c.moveToFirst()) {
@@ -183,34 +173,25 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
             @SuppressLint("Range") double disc = c.getDouble(c.getColumnIndex(TB_CLM_DISCOUNT));
             Products p = new Products(id, image, name, price, brand, pieces, desc, disc);
             c.close();
-            db.close();
             return p;
         }
         c.close();
-        db.close();
         return null;
     }
-
-    // === NÂNG CẤP 2: Thêm sortOrder ===
-    // Hàm này dùng để tương thích với code cũ
     public ArrayList<Products> getProductForSearch(String nameProduct, String tableName) {
         return getProductForSearch(nameProduct, tableName, null);
     }
-
-    // Hàm chính đã nâng cấp (đã sửa lỗi ID và thêm sortOrder)
     public ArrayList<Products> getProductForSearch(String nameProduct, String tableName, String sortOrder) {
         ArrayList<Products> list = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
-
         String sql = "SELECT * FROM " + tableName + " WHERE " + TB_CLM_NAME + " LIKE ?";
         if (sortOrder != null && !sortOrder.isEmpty()) {
-            sql += " ORDER BY " + TB_CLM_PRICE + " " + sortOrder; // Sắp xếp theo GIÁ
+            sql += " ORDER BY " + TB_CLM_PRICE + " " + sortOrder;
         }
-
         Cursor c = db.rawQuery(sql, new String[]{"%" + nameProduct + "%"});
         if (c.moveToFirst()) {
             do {
-                @SuppressLint("Range") int id = c.getInt(c.getColumnIndex(TB_CLM_ID)); // LẤY ID
+                @SuppressLint("Range") int id = c.getInt(c.getColumnIndex(TB_CLM_ID));
                 @SuppressLint("Range") String image = c.getString(c.getColumnIndex(TB_CLM_IMAGE));
                 @SuppressLint("Range") String name = c.getString(c.getColumnIndex(TB_CLM_NAME));
                 @SuppressLint("Range") double price = c.getDouble(c.getColumnIndex(TB_CLM_PRICE));
@@ -218,18 +199,15 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
                 @SuppressLint("Range") int pieces = c.getInt(c.getColumnIndex(TB_CLM_PIECES));
                 @SuppressLint("Range") String desc = c.getString(c.getColumnIndex(TB_CLM_DESCRIPTION));
                 @SuppressLint("Range") double disc = c.getDouble(c.getColumnIndex(TB_CLM_DISCOUNT));
-
                 Products p = new Products(id, image, name, price, brand, pieces, desc, disc);
                 list.add(p);
             } while (c.moveToNext());
         }
         c.close();
-        db.close();
         return list;
     }
 
-    // (Giữ nguyên toàn bộ các hàm Purchases (insert, getAll, delete, update, getTotalPrice) và Users (insert, get, update, checkUser) và insertInitialData...)
-    // ...
+    // (Các hàm Purchases và Users không đổi)
     // --------- Purchases ---------
     public boolean insertProductInPurchases(Products p) {
         SQLiteDatabase db = getWritableDatabase();
@@ -241,7 +219,6 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         v.put(TB_CLM_RATING, p.getRating());
         v.put(TB_CLM_QUANTITY, p.getQuantity());
         long res = db.insert(TB_PURCHASES, null, v);
-        db.close();
         return res != -1;
     }
     public ArrayList<Products> getAllProductsInPurchases() {
@@ -250,7 +227,7 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         Cursor c = db.rawQuery("SELECT * FROM " + TB_PURCHASES, null);
         if (c.moveToFirst()) {
             do {
-                @SuppressLint("Range") int id = c.getInt(c.getColumnIndex(TB_CLM_ID)); // <-- LẤY ID
+                @SuppressLint("Range") int id = c.getInt(c.getColumnIndex(TB_CLM_ID));
                 @SuppressLint("Range") String image = c.getString(c.getColumnIndex(TB_CLM_IMAGE));
                 @SuppressLint("Range") String name = c.getString(c.getColumnIndex(TB_CLM_NAME));
                 @SuppressLint("Range") double price = c.getDouble(c.getColumnIndex(TB_CLM_PRICE));
@@ -258,18 +235,16 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
                 @SuppressLint("Range") float rating = c.getFloat(c.getColumnIndex(TB_CLM_RATING));
                 @SuppressLint("Range") int qty = c.getInt(c.getColumnIndex(TB_CLM_QUANTITY));
                 Products p = new Products(image, name, price, brand, rating, qty);
-                p.setId(id); // <-- SET ID CHO SẢN PHẨM
+                p.setId(id);
                 list.add(p);
             } while (c.moveToNext());
         }
         c.close();
-        db.close();
         return list;
     }
     public boolean deleteProductFromPurchases(int productId) {
         SQLiteDatabase db = getWritableDatabase();
         int res = db.delete(TB_PURCHASES, TB_CLM_ID + "=?", new String[]{String.valueOf(productId)});
-        db.close();
         return res > 0;
     }
     public boolean updateProductInPurchases(int productId, int newQuantity) {
@@ -277,7 +252,6 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         ContentValues v = new ContentValues();
         v.put(TB_CLM_QUANTITY, newQuantity);
         int res = db.update(TB_PURCHASES, v, TB_CLM_ID + "=?", new String[]{String.valueOf(productId)});
-        db.close();
         return res > 0;
     }
     @SuppressLint("Range")
@@ -289,7 +263,6 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
             total = c.getDouble(c.getColumnIndex("Total"));
         }
         c.close();
-        db.close();
         return total;
     }
     // --------- Users ---------
@@ -303,7 +276,6 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         v.put(TB_CLM_USER_PHONE, user.getPhone());
         v.put(TB_CLM_USER_IMAGE, user.getUserImage());
         long res = db.insert(TB_USERS, null, v);
-        db.close();
         return res != -1;
     }
     public Users getUser(int user_id) {
@@ -319,11 +291,9 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
             @SuppressLint("Range") String image = c.getString(c.getColumnIndex(TB_CLM_USER_IMAGE));
             Users u = new Users(id, userName, fullName, image, password, email, phone);
             c.close();
-            db.close();
             return u;
         }
         c.close();
-        db.close();
         return null;
     }
     public boolean upDataUser(Users user) {
@@ -334,7 +304,6 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         v.put(TB_CLM_USER_PHONE, user.getPhone());
         v.put(TB_CLM_USER_IMAGE, user.getUserImage());
         int res = db.update(TB_USERS, v, TB_CLM_USER_ID + "=?", new String[]{String.valueOf(user.getId())});
-        db.close();
         return res > 0;
     }
     @SuppressLint("Range")
@@ -348,10 +317,13 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
             }
             c.close();
         }
-        db.close();
         return id;
     }
+
+    // === HÀM ĐÃ CẬP NHẬT (60 SẢN PHẨM) ===
+    // (Khớp với 10 ảnh cũ + 50 ảnh mới bạn vừa xác nhận)
     private void insertInitialData(SQLiteDatabase db) {
+        // === 10 SẢN PHẨM CŨ (CỦA BẠN) ===
         insertProduct(new Products("tshirt_red", "Áo thun đỏ", 28.0, "Coolmate", 20, "Áo thun đỏ basic", 5.0), TB_SHIRT, db);
         insertProduct(new Products("pants1", "Quần kaki nam", 40.0, "Uniqlo", 35, "Quần kaki thoải mái", 0.0), TB_PANTS, db);
         insertProduct(new Products("shorts1", "Quần short thể thao", 32.0, "Puma", 40, "Quần nhẹ và thoáng khí", 0.0), TB_SHORTS, db);
@@ -362,5 +334,78 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         insertProduct(new Products("hat1", "Mũ lưỡi trai thể thao", 45.0, "Nike", 30, "Mũ nhẹ, che nắng tốt", 10.0), TB_HAT, db);
         insertProduct(new Products("dress1", "Váy xòe dạo phố", 95.0, "Zara", 25, "Váy trẻ trung năng động", 15.0), TB_DRESS, db);
         insertProduct(new Products("watch1", "Đồng hồ nam", 500.0, "Casio", 12, "Chống nước, dây kim loại", 20.0), TB_ACCESSORY, db);
+
+        // === 50 SẢN PHẨM MỚI (THEO ĐÚNG DANH SÁCH BẠN ĐÃ LƯU) ===
+
+        // TB_SHIRT (Thêm 5)
+        insertProduct(new Products("shirt_blue_polo", "Áo Polo Xanh Navy", 35.0, "Ralph Lauren", 50, "Áo polo nam thanh lịch, 100% cotton", 0.0), TB_SHIRT, db);
+        insertProduct(new Products("shirt_white_formal", "Áo Sơ Mi Trắng", 45.0, "An Phước", 30, "Áo sơ mi công sở, vải không nhăn", 10.0), TB_SHIRT, db);
+        insertProduct(new Products("shirt_black_tshirt", "Áo Thun Đen Basic", 15.0, "Uniqlo", 100, "Áo thun cổ tròn, vải co giãn 4 chiều", 0.0), TB_SHIRT, db);
+        insertProduct(new Products("shirt_flannel_plaid", "Áo Sơ Mi Flannel", 38.0, "Levi's", 25, "Áo flannel kẻ caro, chất vải dày dặn, ấm áp", 0.0), TB_SHIRT, db);
+        insertProduct(new Products("shirt_henley_long", "Áo Henley Dài Tay", 29.0, "Coolmate", 40, "Áo henley vải waffle, 3 cúc", 0.0), TB_SHIRT, db);
+
+        // TB_PANTS (Thêm 5)
+        insertProduct(new Products("pants_blue_jeans", "Quần Jeans Xanh", 55.0, "Levi's", 40, "Quần jeans nam, dáng slim-fit, 100% cotton", 0.0), TB_PANTS, db);
+        insertProduct(new Products("pants_beige_chino", "Quần Chino Kaki", 42.0, "Dockers", 30, "Quần chino màu be, 98% cotton, 2% spandex", 0.0), TB_PANTS, db);
+        insertProduct(new Products("pants_black_cargo", "Quần Cargo Đen", 60.0, "Dickies", 20, "Quần túi hộp phong cách đường phố, 100% cotton", 10.0), TB_PANTS, db);
+        insertProduct(new Products("pants_gray_trousers", "Quần Tây Xám", 50.0, "Owen", 35, "Quần tây công sở, ống đứng, 95% poly", 0.0), TB_PANTS, db);
+        insertProduct(new Products("pants_jogger_gray", "Quần Jogger Xám", 35.0, "Adidas", 50, "Quần jogger nỉ, 3 sọc", 0.0), TB_PANTS, db);
+
+        // TB_SHORTS (Thêm 5)
+        insertProduct(new Products("shorts_denim_blue", "Quần Short Jeans", 25.0, "H&M", 50, "Quần short jeans mài nhẹ, 100% cotton", 0.0), TB_SHORTS, db);
+        insertProduct(new Products("shorts_sport_black", "Quần Đùi Thể Thao", 20.0, "Nike", 60, "Quần short 2 lớp, vải Dri-FIT, 100% poly", 0.0), TB_SHORTS, db);
+        insertProduct(new Products("shorts_cargo_beige", "Quần Short Túi Hộp", 30.0, "Old Navy", 40, "Quần short Kaki túi hộp, vải mềm", 0.0), TB_SHORTS, db);
+        insertProduct(new Products("shorts_chino_navy", "Quần Short Chino", 28.0, "Uniqlo", 50, "Quần short chino xanh navy, 98% cotton", 10.0), TB_SHORTS, db);
+        insertProduct(new Products("shorts_swim_red", "Quần Bơi Đỏ", 18.0, "Speedo", 30, "Quần bơi nam, vải mau khô", 0.0), TB_SHORTS, db);
+
+        // TB_JACKET (Thêm 5)
+        insertProduct(new Products("jacket_denim_blue", "Áo Khoác Jeans", 65.0, "Zara", 30, "Áo khoác jeans basic, 100% cotton", 0.0), TB_JACKET, db);
+        insertProduct(new Products("jacket_leather_black", "Áo Khoác Da Đen", 120.0, "Topman", 15, "Áo khoác da Biker, da PU cao cấp", 10.0), TB_JACKET, db);
+        insertProduct(new Products("jacket_bomber_green", "Áo Bomber Xanh Rêu", 70.0, "Alpha", 25, "Áo khoác bomber MA-1, 2 lớp", 0.0), TB_JACKET, db);
+        insertProduct(new Products("jacket_windbreaker_black", "Áo Khoác Gió", 45.0, "The North Face", 40, "Áo khoác gió mỏng, chống nước", 0.0), TB_JACKET, db);
+        insertProduct(new Products("jacket_hoodie_zip_gray", "Áo Hoodie Khóa Kéo", 39.0, "Uniqlo", 50, "Áo hoodie nỉ, có khóa kéo, màu xám", 0.0), TB_JACKET, db);
+
+        // TB_SHOES (Thêm 5)
+        insertProduct(new Products("shoes_white_sneaker", "Giày Sneaker Trắng", 75.0, "Adidas", 50, "Giày Stan Smith, 100% da", 10.0), TB_SHOES, db);
+        insertProduct(new Products("shoes_black_boots", "Giày Boots Da Đen", 110.0, "Dr. Martens", 20, "Giày boots cổ cao, 100% da thật", 0.0), TB_SHOES, db);
+        insertProduct(new Products("shoes_brown_leather", "Giày Tây Da Nâu", 95.0, "Cole Haan", 30, "Giày tây nam, da bò thật, đế cao su", 0.0), TB_SHOES, db);
+        insertProduct(new Products("shoes_running_blue", "Giày Chạy Bộ", 130.0, "Asics", 40, "Giày chạy bộ Gel-Kayano, siêu nhẹ", 0.0), TB_SHOES, db);
+        insertProduct(new Products("shoes_sandals_brown", "Sandal Da Nâu", 30.0, "Birkenstock", 35, "Sandal 2 quai, đế trấu", 0.0), TB_SHOES, db);
+
+        // TB_BELT (Thêm 5)
+        insertProduct(new Products("belt_leather_black", "Thắt Lưng Da Đen", 25.0, "Calvin Klein", 40, "Thắt lưng da, 100% da bò, khóa kim", 0.0), TB_BELT, db);
+        insertProduct(new Products("belt_leather_brown", "Thắt Lưng Da Nâu", 25.0, "Tommy", 40, "Thắt lưng da, 100% da bò, khóa kim", 0.0), TB_BELT, db);
+        insertProduct(new Products("belt_canvas_web", "Thắt Lưng Vải Dù", 15.0, "Timex", 50, "Thắt lưng vải, nhiều màu", 0.0), TB_BELT, db);
+        insertProduct(new Products("belt_braided_brown", "Thắt Lưng Bện", 20.0, "Polo", 30, "Thắt lưng bện co giãn", 0.0), TB_BELT, db);
+        insertProduct(new Products("belt_formal_buckle", "Thắt Lưng Khóa Tự Động", 40.0, "An Phước", 20, "Thắt lưng da công sở, mặt khóa trượt", 0.0), TB_BELT, db);
+
+        // TB_BAG (Thêm 5)
+        insertProduct(new Products("bag_backpack_black", "Balo Đen", 50.0, "Herschel", 40, "Balo 20L, 100% poly, có ngăn laptop", 0.0), TB_BAG, db);
+        insertProduct(new Products("bag_messenger_brown", "Túi Đeo Chéo Nâu", 70.0, "Fossil", 20, "Túi da đeo chéo, da thật", 0.0), TB_BAG, db);
+        insertProduct(new Products("bag_duffle_gray", "Túi Trống Du Lịch", 45.0, "Nike", 30, "Túi du lịch 40L, 100% poly", 0.0), TB_BAG, db);
+        insertProduct(new Products("bag_tote_canvas", "Túi Tote Vải", 15.0, "Ananas", 50, "Túi tote vải canvas, in hình", 0.0), TB_BAG, db);
+        insertProduct(new Products("bag_laptop_briefcase", "Cặp Laptop", 55.0, "Targus", 25, "Cặp laptop 15.6 inch, chống sốc", 0.0), TB_BAG, db);
+
+        // TB_HAT (Thêm 5)
+        insertProduct(new Products("hat_baseball_black", "Mũ Lưỡi Trai Đen", 20.0, "New Era", 50, "Mũ NY Yankees, 100% cotton", 0.0), TB_HAT, db);
+        insertProduct(new Products("hat_bucket_white", "Mũ Bucket Trắng", 18.0, "Kangol", 30, "Mũ tai bèo, 100% cotton", 0.0), TB_HAT, db);
+        insertProduct(new Products("hat_beanie_gray", "Mũ Len Xám", 15.0, "Carhartt", 40, "Mũ len giữ ấm, 100% acrylic", 0.0), TB_HAT, db);
+        insertProduct(new Products("hat_snapback_red", "Mũ Snapback Đỏ", 22.0, "Mitchell & Ness", 20, "Mũ Chicago Bulls, 100% poly", 0.0), TB_HAT, db);
+        insertProduct(new Products("hat_fedora_brown", "Mũ Phớt Nâu", 35.0, "Stetson", 10, "Mũ phớt vành rộng, vải nỉ", 0.0), TB_HAT, db);
+
+        // TB_DRESS (Thêm 5)
+        insertProduct(new Products("dress_floral_midi", "Váy Hoa Nhí Midi", 45.0, "Zara", 30, "Váy hoa, 100% voan lụa, có lớp lót", 0.0), TB_DRESS, db);
+        insertProduct(new Products("dress_black_little", "Váy Đen Ngắn", 50.0, "H&M", 40, "Váy đen dự tiệc, ôm body", 10.0), TB_DRESS, db);
+        insertProduct(new Products("dress_white_maxi", "Váy Maxi Trắng", 60.0, "Mango", 20, "Váy maxi đi biển, 2 dây, 100% cotton", 0.0), TB_DRESS, db);
+        insertProduct(new Products("dress_denim_shirt", "Váy Sơ Mi Jeans", 55.0, "Levi's", 25, "Váy jeans (denim) cộc tay", 0.0), TB_DRESS, db);
+        insertProduct(new Products("dress_red_wrap", "Váy Đỏ Đắp Chéo", 65.0, "Zara", 20, "Váy lụa đỏ, dáng wrap", 10.0), TB_DRESS, db);
+
+        // TB_ACCESSORY (Thêm 5)
+        insertProduct(new Products("accessory_sunglasses_aviator", "Kính Râm", 80.0, "Ray-Ban", 30, "Kính phi công, chống UV 400", 0.0), TB_ACCESSORY, db);
+        insertProduct(new Products("accessory_wallet_black", "Ví Da Đen", 40.0, "Tommy", 40, "Ví da nam, 100% da bò", 0.0), TB_ACCESSORY, db);
+        insertProduct(new Products("accessory_scarf_plaid", "Khăn Choàng Kẻ", 25.0, "Burberry", 25, "Khăn len, 100% cashmere", 0.0), TB_ACCESSORY, db);
+        insertProduct(new Products("accessory_tie_blue_silk", "Cà Vạt Xanh", 20.0, "Vera Wang", 35, "Cà vạt lụa 100% tơ tằm", 0.0), TB_ACCESSORY, db);
+        insertProduct(new Products("accessory_watch_silver", "Đồng Hồ Bạc", 120.0, "Seiko", 15, "Đồng hồ nam, dây kim loại, máy Quartz", 0.0), TB_ACCESSORY, db);
+
     }
 }
