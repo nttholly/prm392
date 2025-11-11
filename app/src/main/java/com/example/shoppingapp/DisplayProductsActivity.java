@@ -99,7 +99,14 @@ public class DisplayProductsActivity extends AppCompatActivity {
             String name = p.getName();
             String brand = p.getBrand();
             int quantity = Integer.parseInt(product_quantity.getSelectedItem().toString());
-            float rating = Float.parseFloat(tv_rating.getText().toString());
+
+            // === SỬA LỖI Ở ĐÂY ===
+            // Lỗi của bạn là lấy rating từ (tv_rating), nó có thể rỗng và gây crash
+            // float rating = Float.parseFloat(tv_rating.getText().toString()); // <--- DÒNG CŨ BỊ LỖI
+
+            // Sửa lại: Lấy rating trực tiếp từ RatingBar (rb)
+            float rating = rb.getRating();
+            // === KẾT THÚC SỬA LỖI ===
 
             Products productToAdd = new Products(image, name, priceAfter, brand, rating, quantity);
 
