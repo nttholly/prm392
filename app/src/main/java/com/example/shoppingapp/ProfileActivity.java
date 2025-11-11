@@ -16,15 +16,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.view.View;
-
 import android.widget.Toast;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    EditText et_name,et_gmail,et_phone;
-    ImageView iv_edit_data,iv_edit_photo,iv_photo;
+    EditText et_name, et_gmail, et_phone;
+    ImageView iv_edit_data, iv_edit_photo, iv_photo;
     Button btn_save;
-    TextView tv_full_name,tv_user_name;
+    TextView tv_full_name, tv_user_name;
     LinearLayout layout_name;
     Uri imageUri;
     SharedPreferences shp_id;
@@ -38,7 +37,7 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("My Profile");
+        if (actionBar != null) actionBar.setTitle("My Profile");
 
         et_name = findViewById(R.id.et_full_name_profile);
         et_gmail = findViewById(R.id.et_gmail_user_profile);
@@ -52,20 +51,27 @@ public class ProfileActivity extends AppCompatActivity {
         layout_name = findViewById(R.id.enter_name);
 
         shp_id = getSharedPreferences("Preferences_id", MODE_PRIVATE);
-        int user_id = shp_id.getInt("user_id",0);
+        int user_id = shp_id.getInt("user_id", 0);
 
         db = new ShoppingDatabase(this);
         Users users = db.getUser(user_id);
-        if(users != null){
+        if (users != null) {
             et_name.setText(users.getFullName());
             et_gmail.setText(users.getEmail());
             et_phone.setText(users.getPhone());
-            if(users.getUserImage()!=null && !users.getUserImage().equals("")){
-                imageUri = Uri.parse(users.getUserImage());
-                iv_photo.setImageURI(imageUri);
-            }else{
+
+            String saved = users.getUserImage();
+            if (saved != null && !saved.isEmpty()) {
+                Uri u = Uri.parse(saved);
+                iv_photo.setImageURI(u);
+                // Fallback nếu URI không render được
+                if (iv_photo.getDrawable() == null) {
+                    iv_photo.setImageResource(R.drawable.man);
+                }
+            } else {
                 iv_photo.setImageResource(R.drawable.man);
             }
+
             tv_full_name.setText(users.getFullName());
             tv_user_name.setText(users.getUserName());
         }
@@ -82,27 +88,34 @@ public class ProfileActivity extends AppCompatActivity {
 
         iv_edit_photo.setOnClickListener(view -> {
             Intent in = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(in,PICK_IMAGE_REQ_COD);
+            startActivityForResult(in, PICK_IMAGE_REQ_COD);
         });
 
         btn_save.setOnClickListener(view -> {
             String name = et_name.getText().toString();
             String gmail = et_gmail.getText().toString();
             String phone = et_phone.getText().toString();
-            String image = "";
-            if(imageUri != null) image = imageUri.toString();
 
-            Users u = new Users(user_id,name,image,gmail,phone);
+            // Lưu rỗng nếu chưa chọn ảnh để đảm bảo nhánh ảnh mặc định
+            String image = (imageUri != null) ? imageUri.toString() : "";
+
+            Users u = new Users(user_id, name, image, gmail, phone);
             db.upDataUser(u);
 
             Users user = db.getUser(user_id);
-            if(user != null){
+            if (user != null) {
                 et_name.setText(user.getFullName());
                 et_gmail.setText(user.getEmail());
                 et_phone.setText(user.getPhone());
-                if(user.getUserImage()!=null && !user.getUserImage().equals("")){
-                    iv_photo.setImageURI(Uri.parse(user.getUserImage()));
-                }else{
+
+                String saved = user.getUserImage();
+                if (saved != null && !saved.isEmpty()) {
+                    Uri u2 = Uri.parse(saved);
+                    iv_photo.setImageURI(u2);
+                    if (iv_photo.getDrawable() == null) {
+                        iv_photo.setImageResource(R.drawable.man);
+                    }
+                } else {
                     iv_photo.setImageResource(R.drawable.man);
                 }
                 tv_full_name.setText(user.getFullName());
@@ -127,10 +140,14 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == PICK_IMAGE_REQ_COD && resultCode == RESULT_OK){
-            if(data != null){
+        if (requestCode == PICK_IMAGE_REQ_COD && resultCode == RESULT_OK) {
+            if (data != null) {
                 imageUri = data.getData();
                 iv_photo.setImageURI(imageUri);
+                // Nếu vì lý do nào đó không render được, fallback ngay
+                if (iv_photo.getDrawable() == null) {
+                    iv_photo.setImageResource(R.drawable.man);
+                }
             }
         }
     }

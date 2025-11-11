@@ -79,6 +79,13 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+        TextView tvForgot = findViewById(R.id.forgotPassword);
+        tvForgot.setOnClickListener(v -> {
+            Intent i = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+            // Có thể truyền sẵn username nếu đang nhập dở
+            i.putExtra("prefill_username", String.valueOf(user_name.getText()));
+            startActivity(i);
+        });
     }
 
     public void checkLogin(){

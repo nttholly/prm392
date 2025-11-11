@@ -408,4 +408,30 @@ public class ShoppingDatabase extends SQLiteOpenHelper {
         insertProduct(new Products("accessory_watch_silver", "Đồng Hồ Bạc", 120.0, "Seiko", 15, "Đồng hồ nam, dây kim loại, máy Quartz", 0.0), TB_ACCESSORY, db);
 
     }
+    public int checkUserByEmail(String userName, String email) {
+        SQLiteDatabase db = getReadableDatabase();
+        int id = 0;
+        Cursor c = db.query(TB_USERS,
+                new String[]{TB_CLM_USER_ID},
+                TB_CLM_USER_NAME + "=? AND " + TB_CLM_USER_EMAIL + "=?",
+                new String[]{userName, email},
+                null, null, null);
+        if (c != null) {
+            if (c.moveToFirst()) {
+                int idx = c.getColumnIndex(TB_CLM_USER_ID);
+                if (idx != -1) id = c.getInt(idx);
+            }
+            c.close();
+        }
+        return id;
+    }
+
+    public boolean updateUserPassword(int userId, String newPassword) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put(TB_CLM_USER_PASSWORD, newPassword);
+        int rows = db.update(TB_USERS, v, TB_CLM_USER_ID + "=?", new String[]{String.valueOf(userId)});
+        return rows > 0;
+    }
+
 }

@@ -21,14 +21,14 @@ public class SettingActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.settings,s);
         fragmentTransaction.commit();
 
-//        sh = getSharedPreferences("myPreferences", MODE_PRIVATE);
-//        boolean stats = sh.getBoolean("dark_mood_screen",false);
-//
-//        if(stats == true){
-//            setTheme(androidx.preference.R.style.ThemeOverlay_AppCompat_Dark);
-//        }else{
-//            setTheme(com.airbnb.lottie.R.style.Theme_AppCompat_DayNight);
-//        }
+        sh = getSharedPreferences("myPreferences", MODE_PRIVATE);
+       boolean stats = sh.getBoolean("dark_mood_screen",false);
+
+        if(stats == true){
+           setTheme(androidx.preference.R.style.ThemeOverlay_AppCompat_Dark);
+        }else{
+           setTheme(com.airbnb.lottie.R.style.Theme_AppCompat_DayNight);
+        }
 
     }
 }

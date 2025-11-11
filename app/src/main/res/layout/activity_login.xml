@@ -97,6 +97,7 @@
                 android:backgroundTint="@color/white"
                 android:layout_gravity="start|center_vertical"
                 android:buttonTint="@color/white"
+                android:visibility="gone"
                 android:textSize="20dp"/>
 
             <TextView
@@ -164,43 +165,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="50dp"
-            android:orientation="horizontal">
-
-
-            <Button
-                android:id="@+id/btnGoogle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="18dp"
-                android:layout_weight="1"
-                android:textColor="@color/black"
-                android:background="@drawable/btn_bg"
-                android:drawableLeft="@drawable/ic_google"
-                android:drawablePadding="10dp"
-                android:paddingLeft="20dp"
-                android:text="Google"
-                android:textAlignment="textStart"
-                android:textAllCaps="false"
-                android:textSize="18sp"/>
-
-            <Button
-                android:id="@+id/btnFacebook"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="18dp"
-                android:layout_weight="1"
-                android:textColor="@color/black"
-                android:background="@drawable/btn_bg"
-                android:drawableLeft="@drawable/ic_facebook"
-                android:drawablePadding="10dp"
-                android:paddingLeft="20dp"
-                android:text="Facebook"
-                android:textAlignment="textStart"
-                android:textAllCaps="false"
-                android:textSize="18sp" />
-        </LinearLayout>
+            android:orientation="horizontal"/>
 
     </LinearLayout>
 
