@@ -97,7 +97,6 @@
                 android:backgroundTint="@color/white"
                 android:layout_gravity="start|center_vertical"
                 android:buttonTint="@color/white"
-                android:visibility="gone"
                 android:textSize="20dp"/>
 
             <TextView
